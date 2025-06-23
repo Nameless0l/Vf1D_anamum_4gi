@@ -180,14 +180,14 @@ Le programme inclut une visualisation ASCII simple :
 
 ```
   Max = 1.000000
-  |                    ****                    
-  |                 ***    ***                 
-  |               **          **               
-  |             **              **             
-  |           **                  **           
-  |         **                      **         
-  |       **                          **       
-  |     **                              **     
+  |                    ****                  
+  |                 ***    ***               
+  |               **          **             
+  |             **              **           
+  |           **                  **         
+  |         **                      **       
+  |       **                          **     
+  |     **                              **   
   |   **                                  **   
   | **                                      ** 
   +---------------------------------------------> x
@@ -197,18 +197,18 @@ Le programme inclut une visualisation ASCII simple :
 
 ## Intégration avec le Programme Principal
 
-Pour LADO et Mbassi, voici l'interface à implémenter dans le programme principal :
+Pour integrer, voici l'interface à implémenter dans le programme principal :
 
 ```java
 public class ResolveurPrincipal {
     private Map<String, MethodeResolution> methodes;
-    
+  
     public ResolveurPrincipal() {
         methodes = new HashMap<>();
         methodes.put("VF1D", new VolumesFinis1DMethode());
         // Ajouter les autres méthodes ici
     }
-    
+  
     public void resoudre(String methode, ParametresEntree params) {
         MethodeResolution solver = methodes.get(methode);
         if (solver != null) {
@@ -222,4 +222,6 @@ public class ResolveurPrincipal {
 ## Contact et Support
 
 Groupe VF 1D :
+
 - @Nameless
+- @
