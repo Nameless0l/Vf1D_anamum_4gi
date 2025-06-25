@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Analyse de Convergence</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+.container { width: 90%; margin: auto; }
+.chart-container { position: relative; height: 500px; margin: 20px 0; }
+table { border-collapse: collapse; margin: 20px 0; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+th { background-color: #f2f2f2; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Analyse de Convergence - Méthode des Volumes Finis 1D</h1>
+<table>
+<tr><th>N</th><th>h</th><th>Erreur L2</th><th>Ordre</th></tr>
+<tr><td>10</td><td>0,1000</td><td>9,099e-02</td><td>-</td></tr>
+<tr><td>20</td><td>0,0500</td><td>9,538e-02</td><td>-0,07</td></tr>
+<tr><td>40</td><td>0,0250</td><td>1,022e-01</td><td>-0,10</td></tr>
+<tr><td>80</td><td>0,0125</td><td>1,069e-01</td><td>-0,06</td></tr>
+<tr><td>160</td><td>0,0063</td><td>1,070e-01</td><td>-0,00</td></tr>
+<tr><td>320</td><td>0,0031</td><td>4,674e-02</td><td>1,19</td></tr>
+<tr><td>640</td><td>0,0016</td><td>1,695e-01</td><td>-1,86</td></tr>
+</table>
+<div class="chart-container">
+<canvas id="convergenceChart"></canvas>
+</div>
+</div>
+<script>
+const ctx = document.getElementById('convergenceChart').getContext('2d');
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: [0.1, 0.05, 0.025, 0.0125, 0.00625, 0.003125, 0.0015625],
+    datasets: [{
+      label: 'Erreur L2',
+      data: [0.09098524708274987, 0.09538454585497864, 0.10220747359417615, 0.10690770036919169, 0.10699909440039812, 0.04674038003150781, 0.16948522917533082],
+      borderColor: 'rgb(75, 192, 192)',
+      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      borderWidth: 2,
+      pointRadius: 5
+    },
+    {
+      label: 'Ordre 2 (référence)',
+      data: [0.09098524708274987, 0.022746311770687467, 0.005686577942671867, 0.0014216444856679667, 3.5541112141699167E-4, 8.885278035424792E-5, 2.221319508856198E-5],
+      borderColor: 'rgb(255, 99, 132)',
+      borderWidth: 2,
+      borderDash: [5, 5],
+      pointRadius: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: 'logarithmic',
+        display: true,
+        title: {
+          display: true,
+          text: 'h (taille de maille)'
+        }
+      },
+      y: {
+        type: 'logarithmic',
+        display: true,
+        title: {
+          display: true,
+          text: 'Erreur L2'
+        }
+      }
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: 'Convergence de la méthode (échelle log-log)',
+        font: { size: 16 }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -81,7 +81,7 @@ public class VolumesFinis1DMainEnhanced {
         System.out.println("2. f(x) = 1");
         System.out.println("3. f(x) = sin(πx)");
         System.out.println("4. f(x) = exp(x)");
-        System.out.println("5. f(x) = x");
+        System.out.println("5. f(x) = 2x");
         System.out.print("Choix: ");
         
         int sourceChoice = scanner.nextInt();
@@ -135,6 +135,7 @@ public class VolumesFinis1DMainEnhanced {
         System.out.println("2. Solution trigonométrique");
         System.out.println("3. Convection-diffusion");
         System.out.println("4. Réaction-diffusion");
+        System.out.println("5. Test équation -u'' + u = 2x");
         
         System.out.print("Choix du test: ");
         int choix = scanner.nextInt();
@@ -151,6 +152,9 @@ public class VolumesFinis1DMainEnhanced {
                 break;
             case 4:
                 testReactionDiffusion();
+                break;
+            case 5:
+                testEquationCustom();
                 break;
             default:
                 System.out.println("Test invalide!");
@@ -291,6 +295,126 @@ public class VolumesFinis1DMainEnhanced {
     }
     
     /**
+     * Test pour l'équation -u'' + u = 2x avec u(0) = 0, u(1) = 2
+     * Solution exacte: u(x) = c₁e^x + c₂e^(-x) + 2x - 2
+     * Avec les conditions aux limites, on obtient les constantes c₁ et c₂
+     */
+    private static void testEquationCustom() throws IOException {
+        System.out.println("\n>>> Test: Équation -u'' + u = 2x");
+        System.out.println("Domaine: [0,1], u(0) = 0, u(1) = 2");
+        
+        double L = 1.0;
+        double a = 1.0;  // coefficient de u''
+        double b = 0.0;  // pas de terme u'
+        double c = -1.0; // coefficient de u (signe négatif car l'équation est -u'' + u = 2x)
+        double u0 = 0.0;
+        double uL = 2.0;
+        
+        // Fonction source f(x) = 2x
+        Function1D source = x -> 2.0 * x;
+        
+        // Solution exacte: résolution analytique de -u'' + u = 2x
+        // u'' - u = -2x
+        // Solution homogène: u_h = c₁e^x + c₂e^(-x)
+        // Solution particulière: u_p = 2x - 2
+        // Solution générale: u(x) = c₁e^x + c₂e^(-x) + 2x - 2
+        // 
+        // Conditions aux limites:
+        // u(0) = c₁ + c₂ - 2 = 0  =>  c₁ + c₂ = 2
+        // u(1) = c₁e + c₂e^(-1) + 2 - 2 = 2  =>  c₁e + c₂/e = 2
+        //
+        // Résolution du système:
+        double e = Math.E;
+        double c2 = (2 * e - 2) / (e * e - 1);
+        double c1 = 2 - c2;
+        
+        Function1D exactSolution = x -> c1 * Math.exp(x) + c2 * Math.exp(-x) + 2*x - 2;
+        
+        System.out.printf("Solution exacte: u(x) = %.6f * e^x + %.6f * e^(-x) + 2x - 2\n", c1, c2);
+        
+        // Test de convergence avec différentes résolutions
+        int[] meshSizes = {10, 20, 40, 80, 160, 320, 640};
+        double[] errors = new double[meshSizes.length];
+        long[] times = new long[meshSizes.length];
+        
+        System.out.println("\nAnalyse de convergence:");
+        System.out.println("N\t\tErreur L2\t\tTemps (ms)\t\tOrdre");
+        System.out.println("------------------------------------------------------------");
+        
+        for (int i = 0; i < meshSizes.length; i++) {
+            int n = meshSizes[i];
+            
+            VolumesFinis1DSolver solver = new VolumesFinis1DSolver(
+                n, L, a, b, c, source, u0, uL, true
+            );
+            
+            long startTime = System.currentTimeMillis();
+            Solution1D solution = solver.solve();
+            long endTime = System.currentTimeMillis();
+            
+            times[i] = endTime - startTime;
+            errors[i] = solver.computeL2Error(solution, exactSolution);
+            
+            double ordre = 0.0;
+            if (i > 0) {
+                ordre = Math.log(errors[i-1] / errors[i]) / Math.log(2.0);
+            }
+            
+            System.out.printf("%d\t\t%.3e\t\t%d\t\t\t%.2f\n", 
+                             n, errors[i], times[i], (i > 0 ? ordre : 0.0));
+        }
+        
+        // Calcul de l'ordre de convergence moyen
+        double ordreTotal = 0.0;
+        for (int i = 1; i < errors.length; i++) {
+            ordreTotal += Math.log(errors[i-1] / errors[i]) / Math.log(2.0);
+        }
+        double ordreMoyen = ordreTotal / (errors.length - 1);
+        System.out.printf("\nOrdre de convergence moyen: %.2f\n", ordreMoyen);
+        
+        // Génération du graphique de convergence
+        GraphGenerator.generateConvergencePlot(meshSizes, errors, 
+            "demo_convergence_equation_custom.html");
+        System.out.println("✓ Graphique de convergence: demo_convergence_equation_custom.html");
+        
+        // Génération du graphique de comparaison solution numérique/exacte
+        int nFinal = 160; // Résolution pour la visualisation
+        VolumesFinis1DSolver finalSolver = new VolumesFinis1DSolver(
+            nFinal, L, a, b, c, source, u0, uL, true
+        );
+        Solution1D numericalSolution = finalSolver.solve();
+        
+        // Calcul de la solution exacte sur le même maillage
+        double[] xExact = numericalSolution.getMeshPoints();
+        double[] uExact = new double[nFinal];
+        for (int j = 0; j < nFinal; j++) {
+            uExact[j] = exactSolution.evaluate(xExact[j]);
+        }
+        Solution1D exactSol = new Solution1D(uExact, xExact, numericalSolution.getCellWidths(), nFinal);
+        
+        GraphGenerator.generateSolutionPlot(numericalSolution, exactSol,
+            "Test Équation: -u'' + u = 2x", "demo_equation_custom.html");
+        System.out.println("✓ Graphique comparatif: demo_equation_custom.html");
+        
+        // Affichage de quelques valeurs pour vérification
+        System.out.println("\nVérification (N = " + nFinal + "):");
+        System.out.println("x\t\tNumérique\tExacte\t\tErreur");
+        System.out.println("----------------------------------------------------");
+        
+        double[] xPoints = numericalSolution.getMeshPoints();
+        double[] uNumerique = numericalSolution.getValues();
+        
+        for (int i = 0; i < nFinal; i += nFinal/10) {
+            double x = xPoints[i];
+            double uNum = uNumerique[i];
+            double uEx = exactSolution.evaluate(x);
+            double err = Math.abs(uNum - uEx);
+            
+            System.out.printf("%.3f\t\t%.6f\t%.6f\t%.3e\n", x, uNum, uEx, err);
+        }
+    }
+    
+    /**
      * Analyse complète avec tous les graphiques
      */
     private static void analyseComplete() throws IOException {
@@ -425,7 +549,7 @@ public class VolumesFinis1DMainEnhanced {
             case 2: return x -> 1.0;
             case 3: return x -> Math.sin(Math.PI * x / L);
             case 4: return x -> Math.exp(x);
-            case 5: return x -> x;
+            case 5: return x -> 2*x;
             default: return x -> 0.0;
         }
     }
