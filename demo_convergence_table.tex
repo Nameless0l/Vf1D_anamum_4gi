@@ -1,0 +1,30 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\begin{document}
+
+\section{Convergence Analysis}
+
+\begin{table}[htbp]
+\centering
+\caption{Convergence study for the finite volume method}
+\begin{tabular}{ccccc}
+\toprule
+$N$ & $h$ & $\|e\|_{L^2}$ & Order & CPU (ms) \\
+\midrule
+10 & 0,1000 & 3,373e-01 & -- & 0 \\
+20 & 0,0500 & 3,761e-01 & -0,16 & 0 \\
+40 & 0,0250 & 3,986e-01 & -0,08 & 1 \\
+80 & 0,0125 & 4,108e-01 & -0,04 & 6 \\
+160 & 0,0063 & 4,119e-01 & -0,00 & 11 \\
+320 & 0,0031 & 2,508e-01 & 0,72 & 23 \\
+640 & 0,0016 & 1,772e-01 & 0,50 & 45 \\
+1280 & 0,0008 & 3,566e-01 & -1,01 & 84 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Average convergence order: 0,069
+
+\end{document}

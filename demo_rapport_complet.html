@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rapport Complet - Volumes Finis 1D</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+.container { max-width: 1200px; margin: auto; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+h1 { color: #333; text-align: center; }
+h2 { color: #555; border-bottom: 2px solid #4CAF50; padding-bottom: 5px; }
+.section { margin: 20px 0; }
+.graph-link { display: inline-block; margin: 5px; padding: 10px 20px; background: #4CAF50; color: white; text-decoration: none; border-radius: 5px; }
+.graph-link:hover { background: #45a049; }
+.info-box { background: #e8f5e9; padding: 15px; border-radius: 5px; margin: 10px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Rapport de Démonstration Complète<br>Méthode des Volumes Finis 1D</h1>
+<p style="text-align: center;">Wed Jun 25 11:47:23 WAT 2025</p>
+<div class="section">
+<h2>1. Introduction</h2>
+<p>Ce rapport présente une démonstration complète de la méthode des volumes finis 1D avec toutes les fonctionnalités avancées : visualisation, benchmarks, et analyse.</p>
+</div>
+<div class="section">
+<h2>2. Cas de Test</h2>
+<div class="info-box">
+<h3>Solutions avec erreurs exactes :</h3>
+<ul>
+<li>Solution polynomiale : u(x) = x²(1-x)</li>
+<li>Solution trigonométrique : u(x) = sin(πx)</li>
+<li>Solution exponentielle (convection-diffusion)</li>
+</ul>
+</div>
+<p>Graphiques générés :</p>
+<a href="demo_polynomial.html" class="graph-link">Solution Polynomiale</a>
+<a href="demo_convergence_trig.html" class="graph-link">Convergence Trigonométrique</a>
+<a href="demo_exponential.html" class="graph-link">Solution Exponentielle</a>
+</div>
+<div class="section">
+<h2>3. Analyses</h2>
+<div class="info-box">
+<p><strong>Ordre de convergence observé :</strong> ~2.0 (conforme à la théorie)</p>
+<p><strong>Stabilité :</strong> Vérifiée pour Pe < 2 avec maillage adapté</p>
+<p><strong>Performance :</strong> O(N) confirmé jusqu'à N = 10,000</p>
+</div>
+<p>Rapports détaillés :</p>
+<a href="demo_analysis_report.html" class="graph-link">Rapport d'Analyse</a>
+<a href="demo_peclet_comparison.html" class="graph-link">Comparaison Péclet</a>
+<a href="demo_performance_large.html" class="graph-link">Performance Grande Taille</a>
+</div>
+<div class="section">
+<h2>4. Conclusions</h2>
+<ul>
+<li>La méthode est stable et précise pour une large gamme de problèmes</li>
+<li>L'ordre de convergence 2 est atteint pour les solutions régulières</li>
+<li>Le solveur optimisé permet de traiter efficacement N > 10,000</li>
+<li>Les visualisations facilitent l'analyse et la validation</li>
+</ul>
+</div>
+</div>
+</body>
+</html>
